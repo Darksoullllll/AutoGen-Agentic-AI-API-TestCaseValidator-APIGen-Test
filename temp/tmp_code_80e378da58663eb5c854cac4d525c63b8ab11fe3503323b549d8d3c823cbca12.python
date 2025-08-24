@@ -1,0 +1,200 @@
+import subprocess
+
+try:
+    import requests
+except ImportError:
+    subprocess.check_call(["pip", "install", "requests"])
+    import requests
+
+API_URL = "https://jsonplaceholder.typicode.com/todos"
+
+def test_get_all_todos_status_code_200():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_get_all_todos_status_code_200")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_status_code_200 - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_status_code_200 - Exception: {e}")
+
+def test_get_all_todos_response_body_type():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        data = response.json()
+        assert isinstance(data, list)
+        print("PASS: test_get_all_todos_response_body_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_response_body_type")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_response_body_type - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_response_body_type - Exception: {e}")
+
+def test_get_all_todos_response_body_structure():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        for item in data:
+            assert "userId" in item
+            assert "id" in item
+            assert "title" in item
+            assert "completed" in item
+        print("PASS: test_get_all_todos_response_body_structure")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_response_body_structure")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_response_body_structure - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_response_body_structure - Exception: {e}")
+
+def test_get_all_todos_userid_data_type():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        for item in data:
+            assert isinstance(item["userId"], int)
+        print("PASS: test_get_all_todos_userid_data_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_userid_data_type")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_userid_data_type - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_userid_data_type - Exception: {e}")
+
+def test_get_all_todos_id_data_type():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        for item in data:
+            assert isinstance(item["id"], int)
+        print("PASS: test_get_all_todos_id_data_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_id_data_type")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_id_data_type - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_id_data_type - Exception: {e}")
+
+def test_get_all_todos_title_data_type():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        for item in data:
+            assert isinstance(item["title"], str)
+        print("PASS: test_get_all_todos_title_data_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_title_data_type")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_title_data_type - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_title_data_type - Exception: {e}")
+
+def test_get_all_todos_completed_data_type():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        for item in data:
+            assert isinstance(item["completed"], bool)
+        print("PASS: test_get_all_todos_completed_data_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_completed_data_type")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_completed_data_type - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_all_todos_completed_data_type - Exception: {e}")
+
+def test_get_specific_todo_valid_id_status_code_200():
+    try:
+        response = requests.get(f"{API_URL}/1", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_get_specific_todo_valid_id_status_code_200")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_valid_id_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_valid_id_status_code_200 - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_specific_todo_valid_id_status_code_200 - Exception: {e}")
+
+def test_get_specific_todo_valid_id_response_body():
+    try:
+        response = requests.get(f"{API_URL}/1", timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        assert data["userId"] == 1
+        assert data["id"] == 1
+        assert data["title"] == "delectus aut autem"
+        assert data["completed"] == False
+        print("PASS: test_get_specific_todo_valid_id_response_body")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_valid_id_response_body")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_valid_id_response_body - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_specific_todo_valid_id_response_body - Exception: {e}")
+
+def test_get_specific_todo_invalid_id_status_code_404():
+    try:
+        response = requests.get(f"{API_URL}/9999", timeout=10)
+        assert response.status_code == 404
+        print("PASS: test_get_specific_todo_invalid_id_status_code_404")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_invalid_id_status_code_404")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_invalid_id_status_code_404 - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_specific_todo_invalid_id_status_code_404 - Exception: {e}")
+
+def test_get_specific_todo_invalid_id_empty_response():
+    try:
+        response = requests.get(f"{API_URL}/9999", timeout=10)
+        if response.status_code == 404:
+            # Check if the response content is empty or contains an error message
+            if response.text == "":
+                print("PASS: test_get_specific_todo_invalid_id_empty_response")
+            elif "Not Found" in response.text:  # Adjust the check based on potential error messages
+                 print("PASS: test_get_specific_todo_invalid_id_empty_response")
+            else:
+                print("FAIL: test_get_specific_todo_invalid_id_empty_response - Response body not empty")
+        else:
+            print("FAIL: test_get_specific_todo_invalid_id_empty_response - Status code is not 404")
+
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_invalid_id_empty_response")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_invalid_id_empty_response - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_get_specific_todo_invalid_id_empty_response - Exception: {e}")
+
+def test_check_content_type_header():
+    try:
+        response = requests.get(API_URL, timeout=10)
+        assert response.headers['Content-Type'] == 'application/json; charset=utf-8'
+        print("PASS: test_check_content_type_header")
+    except AssertionError:
+        print("FAIL: test_check_content_type_header")
+    except requests.Timeout:
+        print("FAIL: test_check_content_type_header - Timeout")
+    except Exception as e:
+        print(f"FAIL: test_check_content_type_header - Exception: {e}")
+# Run the tests
+test_get_all_todos_status_code_200()
+test_get_all_todos_response_body_type()
+test_get_all_todos_response_body_structure()
+test_get_all_todos_userid_data_type()
+test_get_all_todos_id_data_type()
+test_get_all_todos_title_data_type()
+test_get_all_todos_completed_data_type()
+test_get_specific_todo_valid_id_status_code_200()
+test_get_specific_todo_valid_id_response_body()
+test_get_specific_todo_invalid_id_status_code_404()
+test_get_specific_todo_invalid_id_empty_response()
+test_check_content_type_header()

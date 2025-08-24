@@ -1,0 +1,172 @@
+import requests
+import json
+
+# Test Case 1: Retrieve All Todos - Status Code 200
+def test_retrieve_all_todos_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_retrieve_all_todos_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_status_code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_all_todos_status_code - Request failed: {e}")
+
+# Test Case 2: Retrieve All Todos - Response Body Type
+def test_retrieve_all_todos_response_body_type():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        data = response.json()
+        assert isinstance(data, list)
+        print("PASS: test_retrieve_all_todos_response_body_type")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_all_todos_response_body_type - Invalid JSON format")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_response_body_type")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_all_todos_response_body_type - Request failed: {e}")
+
+# Test Case 3: Retrieve All Todos - Response Body Contains Data
+def test_retrieve_all_todos_response_body_contains_data():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        data = response.json()
+        assert len(data) > 0
+        print("PASS: test_retrieve_all_todos_response_body_contains_data")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_all_todos_response_body_contains_data - Invalid JSON format")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_response_body_contains_data")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_all_todos_response_body_contains_data - Request failed: {e}")
+
+# Test Case 4: Retrieve All Todos - Each Todo Has Required Fields
+def test_retrieve_all_todos_each_todo_has_required_fields():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        data = response.json()
+        required_fields = ["userId", "id", "title", "completed"]
+        for item in data:
+            assert all(field in item for field in required_fields)
+        print("PASS: test_retrieve_all_todos_each_todo_has_required_fields")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_all_todos_each_todo_has_required_fields - Invalid JSON format")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_each_todo_has_required_fields")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_all_todos_each_todo_has_required_fields - Request failed: {e}")
+
+# Test Case 5: Retrieve All Todos - Data Types of Fields
+def test_retrieve_all_todos_data_types_of_fields():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        data = response.json()
+        for item in data:
+            assert isinstance(item["userId"], int)
+            assert isinstance(item["id"], int)
+            assert isinstance(item["title"], str)
+            assert isinstance(item["completed"], bool)
+        print("PASS: test_retrieve_all_todos_data_types_of_fields")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_all_todos_data_types_of_fields - Invalid JSON format")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_data_types_of_fields")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_all_todos_data_types_of_fields - Request failed: {e}")
+
+# Test Case 6: Retrieve a Specific Todo - Valid ID - Status Code 200
+def test_retrieve_specific_todo_valid_id_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_retrieve_specific_todo_valid_id_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_status_code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_valid_id_status_code - Request failed: {e}")
+
+# Test Case 7: Retrieve a Specific Todo - Valid ID - Response Body
+def test_retrieve_specific_todo_valid_id_response_body():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        data = response.json()
+        required_fields = ["userId", "id", "title", "completed"]
+        assert all(field in data for field in required_fields)
+        print("PASS: test_retrieve_specific_todo_valid_id_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_response_body - Invalid JSON format")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_response_body")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_valid_id_response_body - Request failed: {e}")
+
+# Test Case 8: Retrieve a Specific Todo - Invalid ID - Status Code 404
+def test_retrieve_specific_todo_invalid_id_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/9999", timeout=10)
+        assert response.status_code == 404
+        print("PASS: test_retrieve_specific_todo_invalid_id_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_invalid_id_status_code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_invalid_id_status_code - Request failed: {e}")
+
+# Test Case 9: Retrieve a Specific Todo - Invalid ID - Response Body
+def test_retrieve_specific_todo_invalid_id_response_body():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/9999", timeout=10)
+        # Check if response is empty or contains an error message
+        if response.status_code == 404:
+            print("PASS: test_retrieve_specific_todo_invalid_id_response_body")  # Assuming 404 implies empty or error message.  Could check response.text == "" or look for specific error message
+        else:
+            print("FAIL: test_retrieve_specific_todo_invalid_id_response_body - Expected 404 status code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_invalid_id_response_body - Request failed: {e}")
+
+# Test Case 10: Retrieve a Specific Todo - Non-Integer ID - Status Code 400 or 500
+def test_retrieve_specific_todo_non_integer_id_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/abc", timeout=10)
+        assert response.status_code in [400, 500]
+        print("PASS: test_retrieve_specific_todo_non_integer_id_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_non_integer_id_status_code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_non_integer_id_status_code - Request failed: {e}")
+
+# Test Case 11: Retrieve a Specific Todo - Non-Integer ID - Response Body
+def test_retrieve_specific_todo_non_integer_id_response_body():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/abc", timeout=10)
+        # Check if the response body contains an error message
+        if response.status_code in [400, 500]:
+            print("PASS: test_retrieve_specific_todo_non_integer_id_response_body") # Assuming that 400/500 implies error message
+        else:
+            print("FAIL: test_retrieve_specific_todo_non_integer_id_response_body - Expected 400 or 500 status code")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_retrieve_specific_todo_non_integer_id_response_body - Request failed: {e}")
+
+# Test Case 12: Check Content Type Header
+def test_check_content_type_header():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        assert response.headers['Content-Type'] == 'application/json; charset=utf-8'
+        print("PASS: test_check_content_type_header")
+    except AssertionError:
+        print("FAIL: test_check_content_type_header")
+    except requests.exceptions.RequestException as e:
+        print(f"FAIL: test_check_content_type_header - Request failed: {e}")
+
+# Run the test cases
+test_retrieve_all_todos_status_code()
+test_retrieve_all_todos_response_body_type()
+test_retrieve_all_todos_response_body_contains_data()
+test_retrieve_all_todos_each_todo_has_required_fields()
+test_retrieve_all_todos_data_types_of_fields()
+test_retrieve_specific_todo_valid_id_status_code()
+test_retrieve_specific_todo_valid_id_response_body()
+test_retrieve_specific_todo_invalid_id_status_code()
+test_retrieve_specific_todo_invalid_id_response_body()
+test_retrieve_specific_todo_non_integer_id_status_code()
+test_retrieve_specific_todo_non_integer_id_response_body()
+test_check_content_type_header()

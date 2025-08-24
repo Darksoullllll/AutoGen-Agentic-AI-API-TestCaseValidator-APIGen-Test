@@ -1,0 +1,188 @@
+import requests
+import json
+
+# Test Case 1: Retrieve All Todos - Status Code 200
+def test_retrieve_all_todos_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_retrieve_all_todos_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_all_todos_status_code - Timeout")
+
+# Test Case 2: Retrieve All Todos - Response Body Type
+def test_retrieve_all_todos_response_body_type():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        todos = response.json()
+        assert isinstance(todos, list)
+        print("PASS: test_retrieve_all_todos_response_body_type")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_response_body_type")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_all_todos_response_body_type - Invalid JSON")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_all_todos_response_body_type - Timeout")
+
+# Test Case 3: Retrieve All Todos - Number of Records
+def test_retrieve_all_todos_number_of_records():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/", timeout=10)
+        todos = response.json()
+        assert len(todos) > 100
+        print("PASS: test_retrieve_all_todos_number_of_records")
+    except AssertionError:
+        print("FAIL: test_retrieve_all_todos_number_of_records")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_all_todos_number_of_records - Timeout")
+
+# Test Case 4: Retrieve a Specific Todo - Valid ID - Status Code 200
+def test_retrieve_specific_todo_valid_id_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_retrieve_specific_todo_valid_id_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_specific_todo_valid_id_status_code - Timeout")
+
+# Test Case 5: Retrieve a Specific Todo - Valid ID - Response Body
+def test_retrieve_specific_todo_valid_id_response_body():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        todo = response.json()
+        assert isinstance(todo, dict)
+        assert "userId" in todo
+        assert "id" in todo
+        assert "title" in todo
+        assert "completed" in todo
+        print("PASS: test_retrieve_specific_todo_valid_id_response_body")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_retrieve_specific_todo_valid_id_response_body - Invalid JSON")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_specific_todo_valid_id_response_body - Timeout")
+
+# Test Case 6: Retrieve a Specific Todo - Invalid ID - Status Code 404
+def test_retrieve_specific_todo_invalid_id_status_code():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/todos/99999", timeout=10)
+        assert response.status_code == 404
+        print("PASS: test_retrieve_specific_todo_invalid_id_status_code")
+    except AssertionError:
+        print("FAIL: test_retrieve_specific_todo_invalid_id_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_retrieve_specific_todo_invalid_id_status_code - Timeout")
+
+# Test Case 7: Create a New Todo - Valid Data - Status Code 201
+def test_create_new_todo_valid_data_status_code():
+    try:
+        data = {"userId": 1, "title": "Test Todo", "completed": False}
+        response = requests.post("https://jsonplaceholder.typicode.com/todos/", json=data, timeout=10)
+        assert response.status_code == 201
+        print("PASS: test_create_new_todo_valid_data_status_code")
+    except AssertionError:
+        print("FAIL: test_create_new_todo_valid_data_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_create_new_todo_valid_data_status_code - Timeout")
+
+# Test Case 8: Create a New Todo - Valid Data - Response Body
+def test_create_new_todo_valid_data_response_body():
+    try:
+        data = {"userId": 1, "title": "Test Todo", "completed": False}
+        response = requests.post("https://jsonplaceholder.typicode.com/todos/", json=data, timeout=10)
+        todo = response.json()
+        assert isinstance(todo, dict)
+        assert "userId" in todo
+        assert "id" in todo
+        assert "title" in todo
+        assert "completed" in todo
+        assert todo["userId"] == 1
+        assert todo["title"] == "Test Todo"
+        assert todo["completed"] == False
+        print("PASS: test_create_new_todo_valid_data_response_body")
+    except AssertionError:
+        print("FAIL: test_create_new_todo_valid_data_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_create_new_todo_valid_data_response_body - Invalid JSON")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_create_new_todo_valid_data_response_body - Timeout")
+
+
+# Test Case 9: Update an Existing Todo - Valid Data - Status Code 200
+def test_update_existing_todo_valid_data_status_code():
+    try:
+        data = {"id": 1, "userId": 1, "title": "Updated Todo", "completed": True}
+        response = requests.put("https://jsonplaceholder.typicode.com/todos/1", json=data, timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_update_existing_todo_valid_data_status_code")
+    except AssertionError:
+        print("FAIL: test_update_existing_todo_valid_data_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_update_existing_todo_valid_data_status_code - Timeout")
+
+# Test Case 10: Update an Existing Todo - Valid Data - Response Body
+def test_update_existing_todo_valid_data_response_body():
+    try:
+        data = {"id": 1, "userId": 1, "title": "Updated Todo", "completed": True}
+        response = requests.put("https://jsonplaceholder.typicode.com/todos/1", json=data, timeout=10)
+        todo = response.json()
+        assert isinstance(todo, dict)
+        assert "userId" in todo
+        assert "id" in todo
+        assert "title" in todo
+        assert "completed" in todo
+        assert todo["userId"] == 1
+        assert todo["title"] == "Updated Todo"
+        assert todo["completed"] == True
+        assert todo["id"] == 1
+        print("PASS: test_update_existing_todo_valid_data_response_body")
+    except AssertionError:
+        print("FAIL: test_update_existing_todo_valid_data_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_update_existing_todo_valid_data_response_body - Invalid JSON")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_update_existing_todo_valid_data_response_body - Timeout")
+
+# Test Case 11: Delete a Todo - Valid ID - Status Code 200
+def test_delete_todo_valid_id_status_code():
+    try:
+        response = requests.delete("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        assert response.status_code == 200
+        print("PASS: test_delete_todo_valid_id_status_code")
+    except AssertionError:
+        print("FAIL: test_delete_todo_valid_id_status_code")
+    except requests.exceptions.Timeout:
+        print("FAIL: test_delete_todo_valid_id_status_code - Timeout")
+
+# Test Case 12: Delete a Todo - Valid ID - Response Body
+def test_delete_todo_valid_id_response_body():
+    try:
+        response = requests.delete("https://jsonplaceholder.typicode.com/todos/1", timeout=10)
+        body = response.json()
+        assert body == {}
+        print("PASS: test_delete_todo_valid_id_response_body")
+    except AssertionError:
+        print("FAIL: test_delete_todo_valid_id_response_body")
+    except json.JSONDecodeError:
+        print("PASS: test_delete_todo_valid_id_response_body - Empty body") #empty body is a valid case
+    except requests.exceptions.Timeout:
+        print("FAIL: test_delete_todo_valid_id_response_body - Timeout")
+
+# Run the tests
+test_retrieve_all_todos_status_code()
+test_retrieve_all_todos_response_body_type()
+test_retrieve_all_todos_number_of_records()
+test_retrieve_specific_todo_valid_id_status_code()
+test_retrieve_specific_todo_valid_id_response_body()
+test_retrieve_specific_todo_invalid_id_status_code()
+test_create_new_todo_valid_data_status_code()
+test_create_new_todo_valid_data_response_body()
+test_update_existing_todo_valid_data_status_code()
+test_update_existing_todo_valid_data_response_body()
+test_delete_todo_valid_id_status_code()
+test_delete_todo_valid_id_response_body()

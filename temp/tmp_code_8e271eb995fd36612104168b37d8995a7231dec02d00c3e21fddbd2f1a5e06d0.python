@@ -1,0 +1,242 @@
+import requests
+import json
+
+# Test Configuration
+BASE_URL = "https://jsonplaceholder.typicode.com/todos/"
+TIMEOUT = 10  # seconds
+
+
+def test_get_all_todos_status_code_200():
+    try:
+        response = requests.get(BASE_URL, timeout=TIMEOUT)
+        assert response.status_code == 200
+        print("PASS: test_get_all_todos_status_code_200")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_status_code_200 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_all_todos_status_code_200 - Request Error: {e}")
+
+
+def test_get_all_todos_response_body_type():
+    try:
+        response = requests.get(BASE_URL, timeout=TIMEOUT)
+        todos = response.json()
+        assert isinstance(todos, list)
+        print("PASS: test_get_all_todos_response_body_type")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_response_body_type")
+    except json.JSONDecodeError:
+        print("FAIL: test_get_all_todos_response_body_type - Invalid JSON")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_response_body_type - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_all_todos_response_body_type - Request Error: {e}")
+
+
+def test_get_all_todos_response_body_content():
+    try:
+        response = requests.get(BASE_URL, timeout=TIMEOUT)
+        todos = response.json()
+        for todo in todos:
+            assert isinstance(todo, dict)
+            assert "userId" in todo
+            assert "id" in todo
+            assert "title" in todo
+            assert "completed" in todo
+            assert isinstance(todo["userId"], int)
+            assert isinstance(todo["id"], int)
+            assert isinstance(todo["completed"], bool)
+            assert isinstance(todo["title"], str)
+        print("PASS: test_get_all_todos_response_body_content")
+    except AssertionError:
+        print("FAIL: test_get_all_todos_response_body_content")
+    except json.JSONDecodeError:
+        print("FAIL: test_get_all_todos_response_body_content - Invalid JSON")
+    except requests.Timeout:
+        print("FAIL: test_get_all_todos_response_body_content - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_all_todos_response_body_content - Request Error: {e}")
+
+
+def test_get_specific_todo_valid_id_status_code_200():
+    try:
+        response = requests.get(BASE_URL + "1", timeout=TIMEOUT)
+        assert response.status_code == 200
+        print("PASS: test_get_specific_todo_valid_id_status_code_200")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_valid_id_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_valid_id_status_code_200 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_specific_todo_valid_id_status_code_200 - Request Error: {e}")
+
+
+def test_get_specific_todo_valid_id_response_body():
+    try:
+        response = requests.get(BASE_URL + "1", timeout=TIMEOUT)
+        todo = response.json()
+        assert isinstance(todo, dict)
+        assert "userId" in todo
+        assert "id" in todo
+        assert "title" in todo
+        assert "completed" in todo
+        assert todo["id"] == 1
+        print("PASS: test_get_specific_todo_valid_id_response_body")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_valid_id_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_get_specific_todo_valid_id_response_body - Invalid JSON")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_valid_id_response_body - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_specific_todo_valid_id_response_body - Request Error: {e}")
+
+
+def test_get_specific_todo_invalid_id_status_code_404():
+    try:
+        response = requests.get(BASE_URL + "99999", timeout=TIMEOUT)
+        assert response.status_code == 404
+        print("PASS: test_get_specific_todo_invalid_id_status_code_404")
+    except AssertionError:
+        print("FAIL: test_get_specific_todo_invalid_id_status_code_404")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_invalid_id_status_code_404 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_specific_todo_invalid_id_status_code_404 - Request Error: {e}")
+
+
+def test_get_specific_todo_invalid_id_response_body():
+    try:
+        response = requests.get(BASE_URL + "99999", timeout=TIMEOUT)
+        # Check if the response is empty or contains an error message indicating not found.
+        if response.status_code == 404:
+            # Attempt to parse JSON, if it fails, assume the body is empty or contains an error message.
+            try:
+                response_json = response.json()
+                #If JSON is returned on a 404, it should contain an error message
+                assert response_json  # Assuming the JSON body should contain an error message
+            except json.JSONDecodeError:
+                # If JSONDecodeError occurs, the body is either empty or not JSON.
+                assert True #Assuming the JSON body is empty
+            except AssertionError:
+                 print("FAIL: test_get_specific_todo_invalid_id_response_body - Response body contains error message, but it is empty")
+            print("PASS: test_get_specific_todo_invalid_id_response_body")
+        else:
+            assert False, "Status code is not 404"
+    except AssertionError as e:
+        print(f"FAIL: test_get_specific_todo_invalid_id_response_body - {e}")
+    except requests.Timeout:
+        print("FAIL: test_get_specific_todo_invalid_id_response_body - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_get_specific_todo_invalid_id_response_body - Request Error: {e}")
+
+def test_create_new_todo_status_code_201():
+    try:
+        payload = {"userId": 1, "title": "Test Todo", "completed": False}
+        headers = {'Content-type': 'application/json'}
+        response = requests.post(BASE_URL, data=json.dumps(payload), headers=headers, timeout=TIMEOUT)
+        assert response.status_code == 201
+        print("PASS: test_create_new_todo_status_code_201")
+    except AssertionError:
+        print("FAIL: test_create_new_todo_status_code_201")
+    except requests.Timeout:
+        print("FAIL: test_create_new_todo_status_code_201 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_create_new_todo_status_code_201 - Request Error: {e}")
+
+
+def test_create_new_todo_response_body():
+    try:
+        payload = {"userId": 1, "title": "Test Todo", "completed": False}
+        headers = {'Content-type': 'application/json'}
+        response = requests.post(BASE_URL, data=json.dumps(payload), headers=headers, timeout=TIMEOUT)
+        todo = response.json()
+        assert isinstance(todo, dict)
+        assert "userId" in todo
+        assert "id" in todo
+        assert "title" in todo
+        assert "completed" in todo
+        assert todo["userId"] == payload["userId"]
+        assert todo["title"] == payload["title"]
+        assert todo["completed"] == payload["completed"]
+        assert isinstance(todo["id"], int)
+        print("PASS: test_create_new_todo_response_body")
+    except AssertionError:
+        print("FAIL: test_create_new_todo_response_body")
+    except json.JSONDecodeError:
+        print("FAIL: test_create_new_todo_response_body - Invalid JSON")
+    except requests.Timeout:
+        print("FAIL: test_create_new_todo_response_body - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_create_new_todo_response_body - Request Error: {e}")
+
+def test_create_new_todo_empty_payload_status_code_201():
+    try:
+        headers = {'Content-type': 'application/json'}
+        response = requests.post(BASE_URL, data=json.dumps({}), headers=headers, timeout=TIMEOUT)
+        assert response.status_code == 201
+        print("PASS: test_create_new_todo_empty_payload_status_code_201")
+    except AssertionError:
+        print("FAIL: test_create_new_todo_empty_payload_status_code_201")
+    except requests.Timeout:
+        print("FAIL: test_create_new_todo_empty_payload_status_code_201 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_create_new_todo_empty_payload_status_code_201 - Request Error: {e}")
+
+def test_update_existing_todo_valid_id_status_code_200():
+    try:
+        payload = {"userId": 1, "id": 1, "title": "Updated Todo", "completed": True}
+        headers = {'Content-type': 'application/json'}
+        response = requests.put(BASE_URL + "1", data=json.dumps(payload), headers=headers, timeout=TIMEOUT)
+        assert response.status_code == 200
+        print("PASS: test_update_existing_todo_valid_id_status_code_200")
+    except AssertionError:
+        print("FAIL: test_update_existing_todo_valid_id_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_update_existing_todo_valid_id_status_code_200 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_update_existing_todo_valid_id_status_code_200 - Request Error: {e}")
+
+def test_update_existing_todo_invalid_id_status_code_404():
+    try:
+        payload = {"userId": 1, "id": 99999, "title": "Updated Todo", "completed": True}
+        headers = {'Content-type': 'application/json'}
+        response = requests.put(BASE_URL + "99999", data=json.dumps(payload), headers=headers, timeout=TIMEOUT)
+        assert response.status_code == 404
+        print("PASS: test_update_existing_todo_invalid_id_status_code_404")
+    except AssertionError:
+        print("FAIL: test_update_existing_todo_invalid_id_status_code_404")
+    except requests.Timeout:
+        print("FAIL: test_update_existing_todo_invalid_id_status_code_404 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_update_existing_todo_invalid_id_status_code_404 - Request Error: {e}")
+
+def test_delete_existing_todo_valid_id_status_code_200():
+    try:
+        response = requests.delete(BASE_URL + "1", timeout=TIMEOUT)
+        assert response.status_code == 200
+        print("PASS: test_delete_existing_todo_valid_id_status_code_200")
+    except AssertionError:
+        print("FAIL: test_delete_existing_todo_valid_id_status_code_200")
+    except requests.Timeout:
+        print("FAIL: test_delete_existing_todo_valid_id_status_code_200 - Timeout Error")
+    except requests.RequestException as e:
+        print(f"FAIL: test_delete_existing_todo_valid_id_status_code_200 - Request Error: {e}")
+
+
+# Run the tests
+test_get_all_todos_status_code_200()
+test_get_all_todos_response_body_type()
+test_get_all_todos_response_body_content()
+test_get_specific_todo_valid_id_status_code_200()
+test_get_specific_todo_valid_id_response_body()
+test_get_specific_todo_invalid_id_status_code_404()
+test_get_specific_todo_invalid_id_response_body()
+test_create_new_todo_status_code_201()
+test_create_new_todo_response_body()
+test_create_new_todo_empty_payload_status_code_201()
+test_update_existing_todo_valid_id_status_code_200()
+test_update_existing_todo_invalid_id_status_code_404()
+test_delete_existing_todo_valid_id_status_code_200()

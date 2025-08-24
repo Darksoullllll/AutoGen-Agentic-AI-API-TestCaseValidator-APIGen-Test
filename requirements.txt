@@ -1,0 +1,13 @@
+requests
+pandas
+ipykernel
+pydantic
+autogen-agentchat
+autogen-ext[openai]
+python-dotenv
+autogen-ext[semantic-kernel-anthropic]
+autogen-core
+streamlit
+asyncio
+flask
+autogen-ext[docker]
